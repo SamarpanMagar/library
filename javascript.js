@@ -41,7 +41,9 @@ function renderLibrary () {
     container.innerHTML = ``;
 
     let bookNumber = 1;
-    for (book of myLibrary) {
+    for (let i = 0 ; i < myLibrary.length; i++) {
+        let book = myLibrary[i];
+
         let newBook = document.createElement('div');
         newBook.classList.add('book');
 
@@ -51,6 +53,8 @@ function renderLibrary () {
         else {
             newBook.classList.add('notread');
         }
+
+        newBook.dataset.bookIndex = `${i}`;
 
         newBook.innerHTML = `   
         <div class="bookTop">
@@ -76,6 +80,33 @@ function renderLibrary () {
     `
         container.appendChild(newBook);
 
+        newBook.addEventListener("click", (e) => {
+            let index = e.target.dataset.bookIndex;
+            if (index == undefined) {
+                index = e.target.parentElement.dataset.bookIndex;
+            };
+            if (index == undefined) {
+                index = e.target.parentElement.parentElement.dataset.bookIndex;
+            };
+
+            outer: if (index == undefined) {
+            }
+            else {
+                if (myLibrary[index] == undefined) {
+                    break outer;
+                }
+
+                if (myLibrary[index].status == `Read`) {
+                    myLibrary[index].status = `Not Read`;
+                }
+                else {
+                    myLibrary[index].status = `Read`;
+                }
+            }
+            
+            renderLibrary();
+        })
+
         bookNumber++;
     }
 
@@ -87,7 +118,6 @@ function addRemoveBook () {
     let crosses = document.querySelectorAll('.cross');
     for (cross of crosses) {
         cross.addEventListener('click', (e) => {
-            console.log(`works`);
             let index = (e.target.dataset.index);
             myLibrary.splice(index, 1);
             renderLibrary();
